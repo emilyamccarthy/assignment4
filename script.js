@@ -1,177 +1,106 @@
-var map = L.map('mapid').setView([38.63868,-90.30317], 12);
 
-  // load a tile layer
- L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	maxZoom: 19,
-	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView",
+      "esri/Camera",
+      "esri/widgets/Home",
+      "dojo/domReady!"
+    ], function(WebScene, SceneView, Camera, Home) {
 
-function onEachFeature(feature, layer) {
-  if (feature.properties && feature.properties.popupContent) {
-    layer.bindPopup(feature.properties.popupContent);
-  }
-}
-
-var geojsonFeature = {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "Name": "Sauce on the Side",
-        "popupContent": "<b>Sauce on the Side</b><br>Great calzones and salads"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -90.2565586566925,
-          38.627172226771336
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "Name": "Seoul  Taco",
-        "popupContent": "<b>Seoul Taco</b><br>Korean-mexican fusion, I love the burritos"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -90.24987995624542,
-          38.628341454584714
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "Name": "U-City Grill",
-        "popupContent": "<b>U-City Grill</b><br>Cash only; delicicous beef bulgogi"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -90.30848622322081,
-          38.65663598042729
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "Name": "801 Chophouse",
-        "popupContent": "<b>801 Chophouse</b><br>Elegant steakhouse"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -90.33247590065001,
-          38.64892763595949
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "Name": "Charlie Gitto's",
-        "popupContent": "<b>Charlie Gitto's</b><br>Best creme brulee in STL"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -90.27347803115843,
-          38.61791831050015
-        ]
-      }
-    }
-  ]
-};
-
-L.geoJSON(geojsonFeature, {
-  onEachFeature: onEachFeature
-}).addTo(map);
-
-//var feat = L.geoJSON(geojsonFeature).addTo(map);
-
-//feat.bindPopup("help").openPopup();
-
-var myLines = {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            -106.5234375,
-            35.10193405724606
-          ],
-          [
-            -106.41357421875,
-            35.37113502280101
-          ],
-          [
-            -106.0400390625,
-            35.567980458012094
-          ],
-          [
-            -105.79833984375,
-            35.69299463209881
-          ],
-          [
-            -105.6005859375,
-            35.47856499535729
-          ],
-          [
-            -105.40283203124999,
-            35.460669951495305
-          ],
-          [
-            -105.09521484375,
-            35.69299463209881
-          ],
-          [
-            -104.83154296875,
-            35.94243575255426
-          ],
-          [
-            -104.74365234375,
-            36.049098959065645
-          ],
-          [
-            -104.6337890625,
-            36.2265501474709
-          ],
-          [
-            -104.6337890625,
-            36.421282443649496
-          ]
-        ]
-      }
-    }
-  ]
-}
-
-var myStyle = {
-    "color": "#ff7800",
-    "weight": 2,
-    "opacity": 0.65
-};
-
-L.geoJSON(myLines, {
-    style: myStyle
-}).addTo(map);
-
-
-
-L.geoJSON(states, {
-    style: function(feature) {
-        switch (feature.properties.party) {
-            case 'Republican': return {color: "#C8C9C7"};
-            case 'Democrat':   return {color: "#003DA5"};
+    
+      /*var map = new Map({
+        basemap: "streets",
+        ground: "world-elevation"
+      });*/
+      var scene = new WebScene({
+        portalItem:{
+         id:"8046207c1c214b5587230f5e5f8efc77" 
         }
-    }
-}).addTo(map);
+      });
+      
+      var camera = new Camera({
+        position: [
+           -71.11098041674975,
+          42.37393205541609,
+          550// elevation in meters
+        ],
+        tilt:-60,
+        heading: -50
+      })
+      
+      var camera2 = new Camera({
+        position: [
+							-71.09504081800833,
+							42.345341198800355,
+							200// elevation in meters
+						],
+        tilt: 60,
+        heading: 0
+      })
+      
+      var camera3 = new Camera({
+        position: [
+           -71.1167,
+          42.3770,
+          2000// elevation in meters
+        ],
+        tilt:0,
+        heading: 0
+      });
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: scene,
+        viewingMode:"global",
+        camera: camera3,
+        environment: {
+            lighting: {
+              date: new Date(),
+              directShadowsEnabled: true,
+              // don't update the view time when user pans.
+              // The clock widget drives the time
+              cameraTrackingEnabled: false
+            }
+        },
+    });
+    
+    var homeBtn = new Home({
+        view: view
+    });     
+  
+      // Add the home button to the top left corner of the view
+    view.ui.add(homeBtn, "top-left");
+    
+    [cam1, cam2, v3].forEach(function(button) {
+      button.style.display = 'flex';
+      view.ui.add(button, 'top-right');
+    });
+    
+    cam2.addEventListener('click', function() {
+      // reuse the default camera position already established in the homeBtn
+      view.goTo({
+        target:camera2
+      });
+    });
+      v3.addEventListener('click', function() {
+      // reuse the default camera position already established in the homeBtn
+      view.goTo({
+        position: {
+          x: -70.9628559,
+          y: 42.33616242, 
+          z: 500
+        },
+        tilt: 75,
+        heading: 285
+      });
+    });
+    
+    cam1.addEventListener('click', function() {
+      // reuse the default camera position already established in the homeBtn
+      view.goTo({
+        target:camera
+      });
+    });
+
+
+    });
